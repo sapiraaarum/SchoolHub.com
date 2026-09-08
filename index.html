@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchoolHub - Aplikasi Sekolah</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav {
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .section {
+            display: none;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .card-item {
+            background: #f1f5f9;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-item.pengumuman {
+            border-left-color: var(--accent);
+            background: #fffbeb;
+        }
+
+        .form-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .btn-add {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .btn-del {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🏫 SchoolHub ⭐⭐</div>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('jadwal', this)">📅 Jadwal</button>
+        <button class="nav-btn" onclick="switchTab('tugas', this)">📝 Tugas</button>
+        <button class="nav-btn" onclick="switchTab('pengumuman', this)">📢 Pengumuman</button>
+        <button class="nav-btn" onclick="switchTab('data-kelas', this)">👥 Data Kelas</button>
+    </nav>
+
+    <main>
+        <!-- TAB JADWAL -->
+        <div id="jadwal" class="section active">
+            <h2>Jadwal Pelajaran</h2>
+            <div class="form-box">
+                <div class="form-group">
+                    <label>Hari</label>
+                    <select id="jHari">
+                        <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mata Pelajaran & Jam</label>
+                    <input type="text" id="jMapel" placeholder="Contoh: Matematika (07.30 - 09.00)">
+                </div>
+                <button class="btn-add" onclick="tambahJadwal()">+ Tambah Jadwal</button>
+            </div>
+            <div class="card-list" id="listJadwal"></div>
+        </div>
+
+        <!-- TAB TUGAS -->
+        <div id="tugas" class="section">
+            <h2>Daftar Tugas</h2>
+            <div class="form-box">
+                <div class="form-group">
+                    <label>Nama Tugas</label>
+                    <input type="text" id="tNama" placeholder="Contoh: PR Fisika Bab 3">
+                </div>
+                <div class="form-group">
+                    <label>Tenggat Waktu (Deadline)</label>
+                    <input type="date" id="tDeadline">
+                </div>
+                <button class="btn-add" onclick="tambahTugas()">+ Tambah Tugas</button>
+            </div>
+            <div class="card-list" id="listTugas"></div>
+        </div>
+
+        <!-- TAB PENGUMUMAN -->
+        <div id="pengumuman" class="section">
+            <h2>Pengumuman Kelas</h2>
+            <div class="form-box">
+                <div class="form-group">
+                    <label>Judul Pengumuman</label>
+                    <input type="text" id="pJudul" placeholder="Contoh: Kerja Bakti Hari Jumat">
+                </div>
+                <div class="form-group">
+                    <label>Isi Informasi</label>
+                    <textarea id="pIsi" rows="2" placeholder="Detail pengumuman..."></textarea>
+                </div>
+                <button class="btn-add" onclick="tambahPengumuman()">+ Tambah Pengumuman</button>
+            </div>
+            <div class="card-list" id="listPengumuman"></div>
+        </div>
+
+        <!-- TAB DATA KELAS -->
+        <div id="data-kelas" class="section">
+            <h2>Data Siswa Kelas</h2>
+            <div class="form-box">
+                <div class="form-group">
+                    <label>Nama Siswa</label>
+                    <input type="text" id="kNama" placeholder="Nama lengkap">
+                </div>
+                <div class="form-group">
+                    <label>Jabatan / Peran</label>
+                    <input type="text" id="kJabatan" placeholder="Contoh: Ketua Kelas / Anggota">
+                </div>
+                <button class="btn-add" onclick="tambahSiswa()">+ Tambah Siswa</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Siswa</th>
+                        <th>Jabatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="listSiswa"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // LocalStorage Data Init
+        let db = JSON.parse(localStorage.getItem('schoolhub_db')) || {
+            jadwal: [], tugas: [], pengumuman: [], siswa: []
+        };
+
+        function saveData() {
+            localStorage.setItem('schoolhub_db', JSON.stringify(db));
+            render();
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Functions Tambah Data
+        function tambahJadwal() {
+            const hari = document.getElementById('jHari').value;
+            const mapel = document.getElementById('jMapel').value;
+            if(!mapel) return alert('Isi mata pelajaran!');
+            db.jadwal.push({ hari, mapel });
+            document.getElementById('jMapel').value = '';
+            saveData();
+        }
+
+        function tambahTugas() {
+            const nama = document.getElementById('tNama').value;
+            const deadline = document.getElementById('tDeadline').value;
+            if(!nama || !deadline) return alert('Lengkapi data tugas!');
+            db.tugas.push({ nama, deadline });
+            document.getElementById('tNama').value = '';
+            saveData();
+        }
+
+        function tambahPengumuman() {
+            const judul = document.getElementById('pJudul').value;
+            const isi = document.getElementById('pIsi').value;
+            if(!judul || !isi) return alert('Lengkapi data pengumuman!');
+            db.pengumuman.push({ judul, isi });
+            document.getElementById('pJudul').value = '';
+            document.getElementById('pIsi').value = '';
+            saveData();
+        }
+
+        function tambahSiswa() {
+            const nama = document.getElementById('kNama').value;
+            const jabatan = document.getElementById('kJabatan').value || 'Anggota';
+            if(!nama) return alert('Isi nama siswa!');
+            db.siswa.push({ nama, jabatan });
+            document.getElementById('kNama').value = '';
+            document.getElementById('kJabatan').value = '';
+            saveData();
+        }
+
+        // Functions Hapus Data
+        function hapusData(tipe, index) {
+            db[tipe].splice(index, 1);
+            saveData();
+        }
+
+        // Render UI
+        function render() {
+            // Render Jadwal
+            const elJadwal = document.getElementById('listJadwal');
+            elJadwal.innerHTML = db.jadwal.map((item, i) => `
+                <div class="card-item">
+                    <div><strong>[${item.hari}]</strong> ${item.mapel}</div>
+                    <button class="btn-del" onclick="hapusData('jadwal', ${i})">Hapus</button>
+                </div>
+            `).join('');
+
+            // Render Tugas
+            const elTugas = document.getElementById('listTugas');
+            elTugas.innerHTML = db.tugas.map((item, i) => `
+                <div class="card-item">
+                    <div><strong>${item.nama}</strong><br><small style="color:#64748b">Deadline: ${item.deadline}</small></div>
+                    <button class="btn-del" onclick="hapusData('tugas', ${i})">Hapus</button>
+                </div>
+            `).join('');
+
+            // Render Pengumuman
+            const elPengumuman = document.getElementById('listPengumuman');
+            elPengumuman.innerHTML = db.pengumuman.map((item, i) => `
+                <div class="card-item pengumuman">
+                    <div><strong>📢 ${item.judul}</strong><p style="font-size:0.85rem; margin-top:4px;">${item.isi}</p></div>
+                    <button class="btn-del" onclick="hapusData('pengumuman', ${i})">Hapus</button>
+                </div>
+            `).join('');
+
+            // Render Siswa
+            const elSiswa = document.getElementById('listSiswa');
+            elSiswa.innerHTML = db.siswa.map((item, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${item.nama}</td>
+                    <td>${item.jabatan}</td>
+                    <td><button class="btn-del" onclick="hapusData('siswa', ${i})">Hapus</button></td>
+                </tr>
+            `).join('');
+        }
+
+        render();
+    </script>
+</body>
+</html>
